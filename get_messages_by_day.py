@@ -47,13 +47,13 @@ class GetMessagesByDay():
         self.dates_by_msg_index = []
         self.index_of_first_message_for_last_date = 0
 
+        self.all_messages = []
+        self.next_page_token = None
+
         counts_by_date = []
         today = datetime.datetime.now().date()
 
-        messages_result = self.service.users().messages().list(userId='me', labelIds=['INBOX'],
-                                                               maxResults=500).execute()
-        self.all_messages = messages_result['messages']
-        self.next_page_token = messages_result['nextPageToken']
+        self.add_messages()
 
         self.set_date_for_index(0)
         self.set_date_for_index(len(self.all_messages) - 1)
@@ -69,7 +69,7 @@ class GetMessagesByDay():
             self.dates_by_msg_index = sorted(self.dates_by_msg_index, key=lambda val: val[0])
 
             print("Got index %s for %s, for %s total messages" % (
-            index_of_first_message_for_date, date, number_of_messages))
+                index_of_first_message_for_date, date, number_of_messages))
 
         counts_with_date = [[str(x[0]), x[1]] for x in counts_by_date]
         print("Counts by date: ")
@@ -94,11 +94,7 @@ class GetMessagesByDay():
 
             if date_at_pointer > date:
                 if len(self.dates_by_msg_index) - 1 == index:
-                    messages_result = self.service.users().messages().list(userId='me', labelIds=['INBOX'],
-                                                                           maxResults=500,
-                                                                           pageToken=self.next_page_token).execute()
-                    self.all_messages += messages_result['messages']
-                    self.next_page_token = messages_result['nextPageToken']
+                    self.add_messages()
 
                     self.set_date_for_index(len(self.all_messages) - 1)
                 index += 1
@@ -112,6 +108,19 @@ class GetMessagesByDay():
                 break
 
         return message_index
+
+    def add_messages(self):
+        list_args = {
+            'userId': 'me', 'labelIds': ['INBOX'],
+            'maxResults': 500,
+        }
+        if self.next_page_token is not None:
+            list_args['pageToken'] = self.next_page_token
+
+        messages_result = self.service.users().messages().list(**list_args).execute()
+
+        self.all_messages += messages_result['messages']
+        self.next_page_token = messages_result['nextPageToken']
 
     def binary_search_get_index_of_first_message_for_date(self, date, prior_message_index, message_index):
         upper = message_index
