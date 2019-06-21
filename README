@@ -1,0 +1,4 @@
+to use:
+- do steps 1 and 2 from https://developers.google.com/gmail/api/quickstart/python
+- cd into this directory
+- `python3 get_messages_by_day.py`
