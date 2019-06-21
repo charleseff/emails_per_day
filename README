@@ -1,4 +1,10 @@
-to use:
+What?
+This script will show you how many emails were in your Gmail inbox for each of the past 100 days.
+
+Why?
+If you practice Inbox Zero, then the challenge to get to 0 gets harder and harder as the number of emails increases.  Ideally, there is some max value of messages in your inbox per day that should be considered acceptable (for each person that number may be different).  This script will help you identitfy when you have fallen out of your comfort zone - a sign that you should reduce the count - either with filters, unsubscribing from email lists, etc.
+
+How to use?
 - do steps 1 and 2 from https://developers.google.com/gmail/api/quickstart/python
 - cd into this directory
 - `python3 get_messages_by_day.py`
